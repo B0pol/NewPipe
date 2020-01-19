@@ -6,7 +6,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.kiosk.KioskList;
 import org.schabi.newpipe.report.UserAction;
-import org.schabi.newpipe.util.KioskTranslator;
+import org.schabi.newpipe.util.translators.KioskTranslator;
 import org.schabi.newpipe.util.ServiceHelper;
 
 public class DefaultKioskFragment extends KioskFragment {

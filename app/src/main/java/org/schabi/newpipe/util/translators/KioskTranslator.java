@@ -1,11 +1,12 @@
-package org.schabi.newpipe.util;
+package org.schabi.newpipe.util.translators;
 
 import android.content.Context;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.ThemeHelper;
 
 /**
- * Created by Chrsitian Schabesberger on 28.09.17.
+ * Created by Christian Schabesberger on 28.09.17.
  * KioskTranslator.java is part of NewPipe.
  * <p>
  * NewPipe is free software: you can redistribute it and/or modify

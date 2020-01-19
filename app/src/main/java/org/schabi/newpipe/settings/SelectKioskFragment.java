@@ -19,7 +19,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.report.ErrorActivity;
 import org.schabi.newpipe.report.UserAction;
-import org.schabi.newpipe.util.KioskTranslator;
+import org.schabi.newpipe.util.translators.KioskTranslator;
 import org.schabi.newpipe.util.ServiceHelper;
 
 import java.util.List;

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private final TextView itemContentView;
     private final TextView itemLikesCountView;
     private final TextView itemDislikesCountView;
+    private final ImageView itemLikeImageView;
     private final TextView itemPublishedTime;
 
     private String commentText;
@@ -71,6 +73,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         itemDislikesCountView = itemView.findViewById(R.id.detail_thumbs_down_count_view);
         itemPublishedTime = itemView.findViewById(R.id.itemPublishedTime);
         itemContentView = itemView.findViewById(R.id.itemCommentContentView);
+        itemLikeImageView = itemView.findViewById(R.id.detail_thumbs_up_img_view);
     }
 
     public CommentsMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder,
@@ -123,7 +126,8 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         if (item.getLikeCount() >= 0) {
             itemLikesCountView.setText(String.valueOf(item.getLikeCount()));
         } else {
-            itemLikesCountView.setText("-");
+            itemLikesCountView.setVisibility(View.GONE);
+            itemLikeImageView.setVisibility(ImageView.GONE);
         }
 
         if (item.getPublishedTime() != null) {

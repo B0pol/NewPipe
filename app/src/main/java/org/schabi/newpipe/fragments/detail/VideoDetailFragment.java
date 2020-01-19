@@ -36,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -104,6 +105,10 @@ import io.reactivex.schedulers.Schedulers;
 
 import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.COMMENTS;
 import static org.schabi.newpipe.util.AnimationUtils.animateView;
+import static org.schabi.newpipe.util.translators.CategoryTranslator.getTranslatedCategoryName;
+import static org.schabi.newpipe.util.translators.LanguageTranslator.getTranslatedLanguageName;
+import static org.schabi.newpipe.util.translators.LicenceTranslator.getTranslatedLicenceName;
+import static org.schabi.newpipe.util.translators.PrivacyTranslator.getTranslatedPrivacyName;
 
 public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
         implements BackPressable, SharedPreferences.OnSharedPreferenceChangeListener,
@@ -169,6 +174,21 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
     private LinearLayout videoDescriptionRootLayout;
     private TextView videoUploadDateView;
     private TextView videoDescriptionView;
+
+    private ConstraintLayout additionalInformationLayout;
+    private View additionalInformationSeparator;
+    private TextView videoHostViewText;
+    private TextView videoPrivacyViewText;
+    private TextView videoCategoryViewText;
+    private TextView videoLicenceViewText;
+    private TextView videoLanguageViewText;
+    private TextView videoTagsViewText;
+    private RelativeLayout videoHostLayout;
+    private RelativeLayout videoPrivacyLayout;
+    private RelativeLayout videoCategoryLayout;
+    private LinearLayout videoLicenceLayout;
+    private RelativeLayout videoLanguageLayout;
+    private LinearLayout videoTagsLayout;
 
     private View uploaderRootLayout;
     private TextView uploaderTextView;
@@ -509,6 +529,22 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
 
         videoDescriptionRootLayout = rootView.findViewById(R.id.detail_description_root_layout);
         videoUploadDateView = rootView.findViewById(R.id.detail_upload_date_view);
+
+        additionalInformationLayout = rootView.findViewById(R.id.additional_info_layout);
+        additionalInformationSeparator = rootView.findViewById(R.id.additional_info_separator);
+        videoHostViewText = rootView.findViewById(R.id.host_element);
+        videoPrivacyViewText = rootView.findViewById(R.id.privacy_element);
+        videoCategoryViewText = rootView.findViewById(R.id.category_element);
+        videoLicenceViewText = rootView.findViewById(R.id.licence_element);
+        videoLanguageViewText = rootView.findViewById(R.id.language_element);
+        videoTagsViewText = rootView.findViewById(R.id.tags_element);
+        videoHostLayout = rootView.findViewById(R.id.host_container);
+        videoPrivacyLayout = rootView.findViewById(R.id.privacy_container);
+        videoCategoryLayout = rootView.findViewById(R.id.category_container);
+        videoLicenceLayout = rootView.findViewById(R.id.licence_container);
+        videoLanguageLayout = rootView.findViewById(R.id.language_container);
+        videoTagsLayout = rootView.findViewById(R.id.tags_container);
+
         videoDescriptionView = rootView.findViewById(R.id.detail_description_view);
         videoDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -695,7 +731,8 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
             }
 
             @Override
-            public void onNothingSelected(final AdapterView<?> parent) { }
+            public void onNothingSelected(final AdapterView<?> parent) {
+            }
         });
     }
 
@@ -1187,6 +1224,37 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
             videoUploadDateView.setVisibility(View.GONE);
         }
 
+//        // Additional information
+        Context context = getContext();
+        boolean hostInfoAvailable = additionalInfoHelper(info.getHost(),
+                videoHostLayout,
+                videoHostViewText);
+        boolean privacyInfoAvailable = additionalInfoHelper(
+                getTranslatedPrivacyName(info.getPrivacy(), context),
+                videoPrivacyLayout,
+                videoPrivacyViewText);
+        boolean categoryInfoAvailable = additionalInfoHelper(
+                getTranslatedCategoryName(info.getCategory(), context),
+                videoCategoryLayout,
+                videoCategoryViewText);
+        boolean licenceInfoAvailable = additionalInfoHelper(
+                getTranslatedLicenceName(info.getLicence(), context),
+                videoLicenceLayout,
+                videoLicenceViewText);
+        boolean languageInfoAvailable = additionalInfoHelper(
+                getTranslatedLanguageName(info.getLanguageInfo(), context),
+                videoLanguageLayout,
+                videoLanguageViewText);
+        boolean tagsInfoAvailable = additionalInfoHelper(
+                buildStringFromList(info.getTags()),
+                videoTagsLayout,
+                videoTagsViewText);
+        if (!(hostInfoAvailable || privacyInfoAvailable || categoryInfoAvailable
+                || licenceInfoAvailable || languageInfoAvailable || tagsInfoAvailable)) {
+            additionalInformationLayout.setVisibility(ConstraintLayout.GONE);
+            additionalInformationSeparator.setVisibility(View.GONE);
+        }
+
         prepareDescription(info.getDescription());
         updateProgressInfo(info);
 
@@ -1232,6 +1300,41 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
         }
     }
 
+    private String buildStringFromList(final List<String> tags) {
+        if (tags.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder tagsStr = new StringBuilder();
+        for (String tag : tags) {
+            tagsStr.append(tag).append(", ");
+        }
+        return tagsStr.substring(0, tagsStr.length() - 2); //remove the last ", "
+    }
+
+    private boolean additionalInfoHelper(
+            final String itemString, final RelativeLayout container, final TextView itemTextView) {
+        boolean hasInfo = true;
+        if (itemString.equals("") || itemString.equals("Unknown")) {
+            container.setVisibility(RelativeLayout.GONE);
+            hasInfo = false;
+        } else {
+            itemTextView.setText(itemString);
+        }
+        return hasInfo;
+    }
+
+    private boolean additionalInfoHelper(
+            final String itemString, final LinearLayout container, final TextView itemTextView) {
+        boolean hasInfo = true;
+        if (itemString.equals("") || itemString.equals("Unknown")) {
+            container.setVisibility(LinearLayout.GONE);
+            hasInfo = false;
+        } else {
+            itemTextView.setText(itemString);
+        }
+        return hasInfo;
+    }
 
     public void openDownloadDialog() {
         try {
@@ -1271,8 +1374,8 @@ public class VideoDetailFragment extends BaseStateFragment<StreamInfo>
         int errorId = exception instanceof YoutubeStreamExtractor.DecryptException
                 ? R.string.youtube_signature_decryption_error
                 : exception instanceof ExtractionException
-                        ? R.string.parsing_error
-                        : R.string.general_error;
+                ? R.string.parsing_error
+                : R.string.general_error;
 
         onUnrecoverableError(exception, UserAction.REQUESTED_STREAM,
                 NewPipe.getNameOfService(serviceId), url, errorId);

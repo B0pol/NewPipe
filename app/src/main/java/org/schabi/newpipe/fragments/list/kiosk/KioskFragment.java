@@ -22,8 +22,8 @@ import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.report.UserAction;
 import org.schabi.newpipe.util.ExtractorHelper;
-import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.translators.KioskTranslator;
 
 import icepick.State;
 import io.reactivex.Single;

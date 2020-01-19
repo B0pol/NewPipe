@@ -598,4 +598,43 @@
 \n
 \n Donc le choix vous revient : Préferez-vous la vitesse ou des informations précises \?</string>
     <string name="help">Aide</string>
+    <!--metadata-->
+    <string name="host_title">Hôte</string>
+    <string name="privacy_title">Confidentialité</string>
+    <string name="category_title">Catégorie</string>
+    <string name="licence_title">Licence</string>
+    <string name="language_title">Langue</string>
+    <string name="tags_title">Étiquettes</string>
+
+    <string name="privacy_public">Publique</string>
+    <string name="privacy_unlisted">Non répertorié</string>
+    <string name="privacy_private">Privé</string>
+
+    <string name="category_title_music">Musique</string>
+    <string name="category_title_films">Films</string>
+    <string name="category_title_vehicles">Véhicules</string>
+    <string name="category_title_art">Art</string>
+    <string name="category_title_sports">Sports</string>
+    <string name="category_title_travels">Voyages</string>
+    <string name="category_title_gaming">Jeux-vidéos</string>
+    <string name="category_title_people">People</string>
+    <string name="category_title_comedy">Comédie</string>
+    <string name="category_title_entertainment">Divertissement</string>
+    <string name="category_title_news_and_politics"><![CDATA[Actualités & Politique]]></string>
+    <string name="category_title_how_to">Comment faire</string>
+    <string name="category_title_education">Éducation</string>
+    <string name="category_title_activism">Activisme</string>
+    <string name="category_title_science_and_technology"><![CDATA[Science & Technologie]]></string>
+    <string name="category_title_animals">Animaux</string>
+    <string name="category_title_kids">Enfants</string>
+    <string name="category_title_food">Nourriture</string>
+    <string name="category_title_misc">Divers</string>
+
+    <string name="licence_title_attribution">Attribution</string>
+    <string name="licence_title_attribution_share_alike">Attribution - Partage dans les mêmes conditions</string>
+    <string name="licence_title_attribution_no_derivatives">Attribution - Utilisation non commerciale - Pas d’œuvre dérivée</string>
+    <string name="licence_title_attribution_non_commercial">Attribution - Utilisation non commerciale</string>
+    <string name="licence_title_attribution_non_commercial_share_alike">Attribution - Utilisation non commerciale - Partage dans les mêmes conditions</string>
+    <string name="licence_title_attribution_non_commercial_no_derivates">Attribution - Utilisation non commerciale - Pas d’œuvre dérivée</string>
+    <string name="licence_title_public_domain_dedication">Domaine public</string>
 </resources>
