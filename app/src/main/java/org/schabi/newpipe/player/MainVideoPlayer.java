@@ -35,6 +35,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+<<<<<<< HEAD
+=======
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+
+>>>>>>> Basic cards support
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -70,8 +85,10 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SubtitleView;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.stream.Card;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
+import org.schabi.newpipe.info_list.cards.CardAdapter;
 import org.schabi.newpipe.player.helper.PlaybackParameterDialog;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
@@ -92,6 +109,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Queue;
 import java.util.UUID;
 
@@ -128,6 +146,12 @@ public final class MainVideoPlayer extends AppCompatActivity
     private boolean isBackPressed;
 
     private ContentObserver rotationObserver;
+
+    private RecyclerView recyclerView;
+    private CardAdapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
+
+    public List<Card> cards;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Activity LifeCycle
@@ -549,6 +573,12 @@ public final class MainVideoPlayer extends AppCompatActivity
         private ImageButton switchBackgroundButton;
         private ImageButton muteButton;
 
+        private ImageButton cardCloseButton;
+        private ImageButton cardInfoButton;
+        private RelativeLayout controlRoot;
+        private RelativeLayout windowRoot;
+        private RelativeLayout cardInfoContainer;
+
         private RelativeLayout windowRootLayout;
         private View secondaryControls;
 
@@ -559,33 +589,39 @@ public final class MainVideoPlayer extends AppCompatActivity
         }
 
         @Override
-        public void initViews(final View view) {
-            super.initViews(view);
-            this.titleTextView = view.findViewById(R.id.titleTextView);
-            this.channelTextView = view.findViewById(R.id.channelTextView);
-            this.volumeRelativeLayout = view.findViewById(R.id.volumeRelativeLayout);
-            this.volumeProgressBar = view.findViewById(R.id.volumeProgressBar);
-            this.volumeImageView = view.findViewById(R.id.volumeImageView);
-            this.brightnessRelativeLayout = view.findViewById(R.id.brightnessRelativeLayout);
-            this.brightnessProgressBar = view.findViewById(R.id.brightnessProgressBar);
-            this.brightnessImageView = view.findViewById(R.id.brightnessImageView);
-            this.queueButton = view.findViewById(R.id.queueButton);
-            this.repeatButton = view.findViewById(R.id.repeatButton);
-            this.shuffleButton = view.findViewById(R.id.shuffleButton);
+        public void initViews(View rootView) {
+            super.initViews(rootView);
+            this.titleTextView = rootView.findViewById(R.id.titleTextView);
+            this.channelTextView = rootView.findViewById(R.id.channelTextView);
+            this.volumeRelativeLayout = rootView.findViewById(R.id.volumeRelativeLayout);
+            this.volumeProgressBar = rootView.findViewById(R.id.volumeProgressBar);
+            this.volumeImageView = rootView.findViewById(R.id.volumeImageView);
+            this.brightnessRelativeLayout = rootView.findViewById(R.id.brightnessRelativeLayout);
+            this.brightnessProgressBar = rootView.findViewById(R.id.brightnessProgressBar);
+            this.brightnessImageView = rootView.findViewById(R.id.brightnessImageView);
+            this.queueButton = rootView.findViewById(R.id.queueButton);
+            this.repeatButton = rootView.findViewById(R.id.repeatButton);
+            this.shuffleButton = rootView.findViewById(R.id.shuffleButton);
 
-            this.playPauseButton = view.findViewById(R.id.playPauseButton);
-            this.playPreviousButton = view.findViewById(R.id.playPreviousButton);
-            this.playNextButton = view.findViewById(R.id.playNextButton);
-            this.closeButton = view.findViewById(R.id.closeButton);
+            this.playPauseButton = rootView.findViewById(R.id.playPauseButton);
+            this.playPreviousButton = rootView.findViewById(R.id.playPreviousButton);
+            this.playNextButton = rootView.findViewById(R.id.playNextButton);
+            this.closeButton = rootView.findViewById(R.id.closeButton);
 
-            this.moreOptionsButton = view.findViewById(R.id.moreOptionsButton);
-            this.secondaryControls = view.findViewById(R.id.secondaryControls);
-            this.kodiButton = view.findViewById(R.id.kodi);
-            this.shareButton = view.findViewById(R.id.share);
-            this.toggleOrientationButton = view.findViewById(R.id.toggleOrientation);
-            this.switchBackgroundButton = view.findViewById(R.id.switchBackground);
-            this.muteButton = view.findViewById(R.id.switchMute);
-            this.switchPopupButton = view.findViewById(R.id.switchPopup);
+            this.moreOptionsButton = rootView.findViewById(R.id.moreOptionsButton);
+            this.secondaryControls = rootView.findViewById(R.id.secondaryControls);
+            this.kodiButton = rootView.findViewById(R.id.kodi);
+            this.shareButton = rootView.findViewById(R.id.share);
+            this.toggleOrientationButton = rootView.findViewById(R.id.toggleOrientation);
+            this.switchBackgroundButton = rootView.findViewById(R.id.switchBackground);
+            this.muteButton = rootView.findViewById(R.id.switchMute);
+            this.switchPopupButton = rootView.findViewById(R.id.switchPopup);
+            this.cardInfoButton = rootView.findViewById(R.id.cardInfo);
+
+            this.cardCloseButton = rootView.findViewById(R.id.cardCloseButton);
+            this.controlRoot = rootView.findViewById(R.id.playbackControlRoot);
+            this.windowRoot = rootView.findViewById(R.id.playbackWindowRoot);
+            this.cardInfoContainer = rootView.findViewById(R.id.cardInfoContainer);
 
             this.queueLayout = findViewById(R.id.playQueuePanel);
             this.itemsListCloseButton = findViewById(R.id.playQueueClose);
@@ -635,6 +671,8 @@ public final class MainVideoPlayer extends AppCompatActivity
             switchBackgroundButton.setOnClickListener(this);
             muteButton.setOnClickListener(this);
             switchPopupButton.setOnClickListener(this);
+            cardInfoButton.setOnClickListener(this);
+            cardCloseButton.setOnClickListener(this);
 
             getRootView().addOnLayoutChangeListener((view, l, t, r, b, ol, ot, or, ob) -> {
                 if (l != ol || t != ot || r != or || b != ob) {
@@ -718,6 +756,21 @@ public final class MainVideoPlayer extends AppCompatActivity
 
             titleTextView.setText(tag.getMetadata().getName());
             channelTextView.setText(tag.getMetadata().getUploaderName());
+
+            cards = tag.getMetadata().getCards();
+
+            if (cards != null) {
+                ListIterator<Card> iterator = cards.listIterator(); //to remove while iterating.
+                while (iterator.hasNext()) { //if using normal loop, we get ConcurrentModificationException
+                    if (iterator.next().getType() == Card.POLL) iterator.remove();
+                }
+            } //todo: remove this if block when all types are supported
+
+            if (cards == null || cards.isEmpty()) {
+                cardInfoButton.setVisibility(View.GONE);
+            } else {
+                buildCardInfoRecyclerView();
+            }
         }
 
         @Override
@@ -849,7 +902,11 @@ public final class MainVideoPlayer extends AppCompatActivity
                 onPlaybackShutdown();
                 return;
             } else if (v.getId() == kodiButton.getId()) {
-                onKodiShare();
+            	onKodiShare();
+            } else if (v.getId() == cardInfoButton.getId()) {
+                onCardInfoClicked();
+            } else if (v.getId() == cardCloseButton.getId()) {
+                onCardCloseClicked();
             }
 
             if (getCurrentState() != STATE_COMPLETED) {
@@ -909,6 +966,20 @@ public final class MainVideoPlayer extends AppCompatActivity
             }
             toggleOrientation();
             showControlsThenHide();
+        }
+
+        private void onCardInfoClicked() {
+            windowRoot.setVisibility(View.GONE);
+            hideSystemUi();
+            hideControls(DEFAULT_CONTROLS_HIDE_TIME, 0);
+            cardInfoContainer.setVisibility(View.VISIBLE);
+            controlRoot.setVisibility(View.GONE);
+        }
+
+        private void onCardCloseClicked() {
+            cardInfoContainer.setVisibility(View.GONE);
+            controlRoot.setVisibility(View.VISIBLE);
+            windowRoot.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -1256,6 +1327,7 @@ public final class MainVideoPlayer extends AppCompatActivity
         }
     }
 
+<<<<<<< HEAD
     private class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener
             implements View.OnTouchListener {
         private static final int MOVEMENT_THRESHOLD = 40;
@@ -1267,6 +1339,41 @@ public final class MainVideoPlayer extends AppCompatActivity
 
         private final int maxVolume = playerImpl.getAudioReactor().getMaxVolume();
 
+=======
+    private void buildCardInfoRecyclerView() {
+        recyclerView = findViewById(R.id.cardRecyclerView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        adapter = new CardAdapter(cards);
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(position -> {
+            Card current = cards.get(position);
+            switch (current.getType()) {
+                case (Card.CHANNEL):
+                    NavigationHelper.openChannel(getApplicationContext(), current.getServiceId(),
+                            current.getUrl(), Intent.FLAG_ACTIVITY_NEW_TASK);
+                    break;
+                case (Card.VIDEO):
+                    NavigationHelper.openVideoDetail(getApplicationContext(), current.getServiceId(),
+                            current.getUrl(), Intent.FLAG_ACTIVITY_NEW_TASK);
+                    break;
+                case (Card.PLAYLIST):
+                    NavigationHelper.openPlaylist(getApplicationContext(), current.getServiceId(),
+                            current.getUrl(), Intent.FLAG_ACTIVITY_NEW_TASK);
+                case (Card.LINK):
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(current.getUrl()));
+                    startActivity(browserIntent);
+                default:
+                    break; //do nothing
+            }
+        });
+    }
+
+    private class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener implements View.OnTouchListener {
+>>>>>>> Basic cards support
         private boolean isMoving;
 
         @Override

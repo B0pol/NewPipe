@@ -289,7 +289,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:layout_toLeftOf="@id/switchMute"
+                    android:layout_toLeftOf="@id/cardInfo"
                     android:layout_toRightOf="@id/resizeTextView"
                     android:gravity="center|left"
                     android:minHeight="35dp"
@@ -406,6 +406,20 @@
                     android:contentDescription="@string/switch_to_background"
                     tools:ignore="RtlHardcoded" />
 
+
+                <ImageButton
+                    android:id="@+id/cardInfo"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="fitXY"
+                    android:layout_toLeftOf="@id/switchMute"
+                    app:srcCompat="@drawable/ic_info_24dp"
+                    android:background="?attr/selectableItemBackground" />
             </RelativeLayout>
 
             <LinearLayout
@@ -644,6 +658,56 @@
             tools:ignore="RtlHardcoded"
             tools:text="1:06:29"
             tools:visibility="visible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/cardInfoContainer"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:background="@android:color/darker_gray" >
+
+        <TextView
+            android:id="@+id/cardTopText"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Source: Lorem Ipsum"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,RtlSymmetry"
+            android:layout_alignParentStart="true"
+            android:paddingStart="10dp"
+            android:gravity="center_vertical"
+            android:layout_toStartOf="@id/cardCloseButton" />
+
+        <ImageButton
+            android:id="@+id/cardCloseButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_close_white_24dp"
+            android:background="@android:color/darker_gray"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="Close card info button"
+            tools:ignore="HardcodedText" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/cardCloseButton"
+            android:layout_marginLeft="@dimen/video_item_search_padding"
+            android:layout_marginRight="@dimen/video_item_search_padding"
+            android:background="?attr/separator_color"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cardRecyclerView"
+            android:layout_below="@id/cardTopText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:padding="4dp" />
     </RelativeLayout>
 
 </RelativeLayout>
