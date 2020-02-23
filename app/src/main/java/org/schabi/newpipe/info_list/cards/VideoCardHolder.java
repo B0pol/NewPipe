@@ -1,5 +1,6 @@
 package org.schabi.newpipe.info_list.cards;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +23,9 @@ public class VideoCardHolder extends RecyclerView.ViewHolder {
         title = itemView.findViewById(R.id.itemVideoTitleView);
         uploader = itemView.findViewById(R.id.itemUploaderView);
         time = itemView.findViewById(R.id.itemDurationView);
+
+        title.setBackgroundColor(Color.BLACK);
+        uploader.setBackgroundColor(Color.BLACK);
 
         itemView.setOnClickListener(v -> {
             if (listener != null) {

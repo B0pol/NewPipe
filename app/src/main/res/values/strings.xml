@@ -654,4 +654,10 @@
     <string name="detail_sub_channel_thumbnail_view_description">Channel\'s avatar thumbnail</string>
     <string name="channel_created_by">Created by %s</string>
     <string name="video_detail_by">By %s</string>
+    <string name="no_votes">No votes</string>
+    <string name="poll_votes" formatted="true" translatable="false">%s: %.1f%%</string>
+    <plurals name="votes">
+        <item quantity="one">%s vote</item>
+        <item quantity="other">%s votes</item>
+    </plurals>
 </resources>

@@ -35,8 +35,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-<<<<<<< HEAD
-=======
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -49,7 +47,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 
->>>>>>> Basic cards support
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -109,7 +106,6 @@ import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Queue;
 import java.util.UUID;
 
@@ -758,14 +754,6 @@ public final class MainVideoPlayer extends AppCompatActivity
             channelTextView.setText(tag.getMetadata().getUploaderName());
 
             cards = tag.getMetadata().getCards();
-
-            if (cards != null) {
-                ListIterator<Card> iterator = cards.listIterator(); //to remove while iterating.
-                while (iterator.hasNext()) { //if using normal loop, we get ConcurrentModificationException
-                    if (iterator.next().getType() == Card.POLL) iterator.remove();
-                }
-            } //todo: remove this if block when all types are supported
-
             if (cards == null || cards.isEmpty()) {
                 cardInfoButton.setVisibility(View.GONE);
             } else {
@@ -970,10 +958,10 @@ public final class MainVideoPlayer extends AppCompatActivity
 
         private void onCardInfoClicked() {
             windowRoot.setVisibility(View.GONE);
-            hideSystemUi();
-            hideControls(DEFAULT_CONTROLS_HIDE_TIME, 0);
-            cardInfoContainer.setVisibility(View.VISIBLE);
             controlRoot.setVisibility(View.GONE);
+            hideControls(DEFAULT_CONTROLS_HIDE_TIME, 0);
+            hideSystemUi();
+            cardInfoContainer.setVisibility(View.VISIBLE);
         }
 
         private void onCardCloseClicked() {
@@ -1327,19 +1315,6 @@ public final class MainVideoPlayer extends AppCompatActivity
         }
     }
 
-<<<<<<< HEAD
-    private class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener
-            implements View.OnTouchListener {
-        private static final int MOVEMENT_THRESHOLD = 40;
-
-        private final boolean isVolumeGestureEnabled = PlayerHelper
-                .isVolumeGestureEnabled(getApplicationContext());
-        private final boolean isBrightnessGestureEnabled = PlayerHelper
-                .isBrightnessGestureEnabled(getApplicationContext());
-
-        private final int maxVolume = playerImpl.getAudioReactor().getMaxVolume();
-
-=======
     private void buildCardInfoRecyclerView() {
         recyclerView = findViewById(R.id.cardRecyclerView);
         recyclerView.setHasFixedSize(true);
@@ -1372,8 +1347,17 @@ public final class MainVideoPlayer extends AppCompatActivity
         });
     }
 
-    private class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener implements View.OnTouchListener {
->>>>>>> Basic cards support
+    private class PlayerGestureListener extends GestureDetector.SimpleOnGestureListener
+            implements View.OnTouchListener {
+        private static final int MOVEMENT_THRESHOLD = 40;
+
+        private final boolean isVolumeGestureEnabled = PlayerHelper
+                .isVolumeGestureEnabled(getApplicationContext());
+        private final boolean isBrightnessGestureEnabled = PlayerHelper
+                .isBrightnessGestureEnabled(getApplicationContext());
+
+        private final int maxVolume = playerImpl.getAudioReactor().getMaxVolume();
+
         private boolean isMoving;
 
         @Override

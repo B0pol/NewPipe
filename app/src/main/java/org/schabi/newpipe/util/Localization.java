@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import androidx.annotation.NonNull;
 import androidx.annotation.PluralsRes;
 import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
 
 import org.ocpsoft.prettytime.PrettyTime;
 import org.ocpsoft.prettytime.units.Decade;
@@ -181,6 +182,10 @@ public final class Localization {
     public static String localizeWatchingCount(final Context context, final long watchingCount) {
         return getQuantity(context, R.plurals.watching, R.string.no_one_watching, watchingCount,
                 localizeNumber(context, watchingCount));
+    }
+
+    public static String localizeVoteCount(final Context context, final long voteCount) {
+        return getQuantity(context, R.plurals.votes, R.string.no_votes, voteCount, localizeNumber(context, voteCount));
     }
 
     public static String shortCount(final Context context, final long count) {

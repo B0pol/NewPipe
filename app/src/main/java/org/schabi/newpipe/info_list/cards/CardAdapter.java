@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,12 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.stream.Card;
+import org.schabi.newpipe.util.Localization;
 
 import java.util.List;
 
 import static org.schabi.newpipe.util.Localization.getDurationString;
 import static org.schabi.newpipe.util.Localization.localizeStreamCount;
+import static org.schabi.newpipe.util.Localization.localizeVoteCount;
 import static org.schabi.newpipe.util.Localization.shortSubscriberCount;
 
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -49,9 +53,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case (Card.LINK):
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_link, parent, false);
                 return new LinkCardHolder(v, listener);
+            case (Card.POLL):
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_poll, parent, false);
+                return new PollCardHolder(v);
             default:
             case (Card.VIDEO):
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_video, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_stream_grid_item, parent, false);
                 return new VideoCardHolder(v, listener);
         }
     }
@@ -82,7 +89,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 LinkCardHolder linkCardHolder = (LinkCardHolder) holder;
 
                 imageLoader.displayImage(current.getThumbnailUrl(), linkCardHolder.thumbnail);
-                linkCardHolder.host.setText(current.getHost());
+                try {
+                    linkCardHolder.host.setText(current.getHost());
+                } catch (ParsingException e) {
+                    linkCardHolder.host.setText("");
+                }
                 linkCardHolder.title.setText(current.getTitle());
                 linkCardHolder.message.setText(current.getAdditionalMessage());
                 break;
@@ -94,9 +105,36 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 channelCardHolder.name.setText(current.getChannel());
                 channelCardHolder.subscriberCount.setText(shortSubscriberCount(context, current.getCount()));
                 break;
+            case (Card.POLL):
+                PollCardHolder pollCardHolder = (PollCardHolder) holder;
+                context = pollCardHolder.totalVotes.getContext();
+
+                pollCardHolder.title.setText(current.getTitle());
+                pollCardHolder.totalVotes.setText(localizeVoteCount(context, current.getCount()));
+                List<Card.Choice> choices = current.getChoices();
+                TextView currentAnswer;
+                TextView currentVotes;
+                for (int i = 0; i < 5; i++) {
+                    if (i < choices.size()) { //min 2 answer, max 5
+                        currentAnswer = pollCardHolder.getPollAnswer(i);
+                        currentAnswer.setVisibility(View.VISIBLE);
+                        currentAnswer.setText(choices.get(i).getText());
+
+                        currentVotes = pollCardHolder.getPollVotesTextView(i);
+                        displayPollVotes(currentVotes, choices.get(i), context);
+                    }
+                }
+                break;
             default:
                 break;
         }
+    }
+
+    private void displayPollVotes(TextView currentTextView, Card.Choice choice, Context context) {
+        currentTextView.setVisibility(View.VISIBLE);
+        currentTextView.setText(context.getString(R.string.poll_votes,
+                Localization.localizeNumber(context, choice.getNumVotes()),
+                choice.getPercentage()));
     }
 
 
