@@ -105,8 +105,10 @@ import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.FocusOverlayView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.schabi.newpipe.player.BasePlayer.STATE_PLAYING;
@@ -148,6 +150,7 @@ public final class MainVideoPlayer extends AppCompatActivity
     private RecyclerView.LayoutManager layoutManager;
 
     public List<Card> cards;
+    public List<Long> cardsAppearanceTime;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Activity LifeCycle
@@ -630,6 +633,12 @@ public final class MainVideoPlayer extends AppCompatActivity
         }
 
         @Override
+        public void onUpdateProgress(int currentProgress, int duration, int bufferPercent) {
+            checkCardsAppearanceTime(currentProgress);
+            super.onUpdateProgress(currentProgress, duration, bufferPercent);
+        }
+
+        @Override
         protected void setupSubtitleView(@NonNull final SubtitleView view,
                                          final float captionScale,
                                          @NonNull final CaptionStyleCompat captionStyle) {
@@ -758,6 +767,10 @@ public final class MainVideoPlayer extends AppCompatActivity
                 cardInfoButton.setVisibility(View.GONE);
             } else {
                 buildCardInfoRecyclerView();
+            }
+            cardsAppearanceTime = new ArrayList<>(cards.size());
+            for (Card card : cards) {
+                cardsAppearanceTime.add(card.getStartTime());
             }
         }
 
@@ -1313,6 +1326,23 @@ public final class MainVideoPlayer extends AppCompatActivity
         public int getMaxGestureLength() {
             return maxGestureLength;
         }
+    }
+
+    private void checkCardsAppearanceTime(int currentProgress) {
+        int i = 0;
+        for (long time : cardsAppearanceTime) {
+            if (isBetween((int) time, 100, currentProgress)) {
+                TextView teaserTV = findViewById(R.id.cardTeaserMessage);
+                teaserTV.setVisibility(View.VISIBLE);
+                teaserTV.setText(cards.get(i).getTeaserMessage());
+                Toast.makeText(getApplicationContext(), cards.get(i).getTeaserMessage(), Toast.LENGTH_SHORT).show();
+            }
+            i++;
+        }
+    }
+
+    private boolean isBetween(int timeWanted, int delay, int actualTime) {
+        return actualTime - delay <= timeWanted && timeWanted <= actualTime + delay;
     }
 
     private void buildCardInfoRecyclerView() {

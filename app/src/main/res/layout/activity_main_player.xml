@@ -710,4 +710,22 @@
             android:padding="4dp" />
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/cardTeaserMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center|left"
+        android:minHeight="35dp"
+        android:minWidth="40dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:background="@color/dark_youtube_accent_color"
+        tools:ignore="RelativeOverlap,RtlHardcoded"
+        android:visibility="gone"
+        tools:text="Checkout my new video" />
+
 </RelativeLayout>
