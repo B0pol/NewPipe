@@ -30,41 +30,48 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private OnItemClickListener listener;
 
-    public CardAdapter(List<Card> cards) {
+    public CardAdapter(final List<Card> cards) {
         this.cards = cards;
         imageLoader = ImageLoader.getInstance();
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
+    public void setOnItemClickListener(final OnItemClickListener l) {
+        this.listener = l;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent, final int viewType) {
         View v;
         switch (viewType) {
             case (Card.CHANNEL):
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_channel_grid_item, parent, false);
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_channel_grid_item, parent, false);
                 return new ChannelCardHolder(v, listener);
             case (Card.PLAYLIST):
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_playlist_grid_item, parent, false);
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_playlist_grid_item, parent, false);
                 return new PlaylistCardHolder(v, listener);
             case (Card.LINK):
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_link, parent, false);
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_card_link, parent, false);
                 return new LinkCardHolder(v, listener);
             case (Card.POLL):
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_poll, parent, false);
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_card_poll, parent, false);
                 return new PollCardHolder(v);
             default:
             case (Card.VIDEO):
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_stream_grid_item, parent, false);
+                v = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_stream_grid_item, parent, false);
                 return new VideoCardHolder(v, listener);
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(
+            @NonNull final RecyclerView.ViewHolder holder, final int position) {
         Card current = cards.get(position);
         Context context;
         switch (holder.getItemViewType()) {
@@ -81,7 +88,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 context = playlistCardHolder.thumbnail.getContext();
 
                 imageLoader.displayImage(current.getThumbnailUrl(), playlistCardHolder.thumbnail);
-                playlistCardHolder.videoCount.setText(localizeStreamCount(context, current.getCount()));
+                playlistCardHolder.videoCount.setText(
+                        localizeStreamCount(context, current.getCount()));
                 playlistCardHolder.uploader.setText(current.getChannel());
                 playlistCardHolder.title.setText(current.getTitle());
                 break;
@@ -103,14 +111,16 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 imageLoader.displayImage(current.getThumbnailUrl(), channelCardHolder.thumbnail);
                 channelCardHolder.name.setText(current.getChannel());
-                channelCardHolder.subscriberCount.setText(shortSubscriberCount(context, current.getCount()));
+                channelCardHolder.subscriberCount
+                        .setText(shortSubscriberCount(context, current.getCount()));
                 break;
             case (Card.POLL):
                 PollCardHolder pollCardHolder = (PollCardHolder) holder;
                 context = pollCardHolder.totalVotes.getContext();
 
                 pollCardHolder.title.setText(current.getTitle());
-                pollCardHolder.totalVotes.setText(localizeVoteCount(context, current.getCount()));
+                pollCardHolder.totalVotes
+                        .setText(localizeVoteCount(context, current.getCount()));
                 List<Card.Choice> choices = current.getChoices();
                 TextView currentAnswer;
                 TextView currentVotes;
@@ -130,7 +140,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private void displayPollVotes(TextView currentTextView, Card.Choice choice, Context context) {
+    private void displayPollVotes(
+            final TextView currentTextView, final Card.Choice choice, final Context context) {
         currentTextView.setVisibility(View.VISIBLE);
         currentTextView.setText(context.getString(R.string.poll_votes,
                 Localization.localizeNumber(context, choice.getNumVotes()),
@@ -144,7 +155,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(final int position) {
         return cards.get(position).getType();
     }
 

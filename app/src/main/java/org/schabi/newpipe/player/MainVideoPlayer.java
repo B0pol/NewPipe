@@ -35,18 +35,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -74,6 +62,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.Player;
@@ -108,7 +97,6 @@ import org.schabi.newpipe.views.FocusOverlayView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.schabi.newpipe.player.BasePlayer.STATE_PLAYING;
@@ -588,7 +576,7 @@ public final class MainVideoPlayer extends AppCompatActivity
         }
 
         @Override
-        public void initViews(View rootView) {
+        public void initViews(final View rootView) {
             super.initViews(rootView);
             this.titleTextView = rootView.findViewById(R.id.titleTextView);
             this.channelTextView = rootView.findViewById(R.id.channelTextView);
@@ -633,7 +621,8 @@ public final class MainVideoPlayer extends AppCompatActivity
         }
 
         @Override
-        public void onUpdateProgress(int currentProgress, int duration, int bufferPercent) {
+        public void onUpdateProgress(
+                final int currentProgress, final int duration, final int bufferPercent) {
             checkCardsAppearanceTime(currentProgress);
             super.onUpdateProgress(currentProgress, duration, bufferPercent);
         }
@@ -755,8 +744,8 @@ public final class MainVideoPlayer extends AppCompatActivity
             // show kodi button if it supports the current service and it is enabled in settings
             final boolean showKodiButton =
                     KoreUtil.isServiceSupportedByKore(tag.getMetadata().getServiceId())
-                    && PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(context.getString(R.string.show_play_with_kodi_key), false);
+                            && PreferenceManager.getDefaultSharedPreferences(context)
+                            .getBoolean(context.getString(R.string.show_play_with_kodi_key), false);
             kodiButton.setVisibility(showKodiButton ? View.VISIBLE : View.GONE);
 
             titleTextView.setText(tag.getMetadata().getName());
@@ -903,7 +892,7 @@ public final class MainVideoPlayer extends AppCompatActivity
                 onPlaybackShutdown();
                 return;
             } else if (v.getId() == kodiButton.getId()) {
-            	onKodiShare();
+                onKodiShare();
             } else if (v.getId() == cardInfoButton.getId()) {
                 onCardInfoClicked();
             } else if (v.getId() == cardCloseButton.getId()) {
@@ -1223,7 +1212,7 @@ public final class MainVideoPlayer extends AppCompatActivity
         private OnScrollBelowItemsListener getQueueScrollListener() {
             return new OnScrollBelowItemsListener() {
                 @Override
-                public void onScrolledDown(final RecyclerView recyclerView) {
+                public void onScrolledDown(final RecyclerView pRecyclerView) {
                     if (playQueue != null && !playQueue.isComplete()) {
                         playQueue.fetch();
                     } else if (itemsList != null) {
@@ -1328,20 +1317,21 @@ public final class MainVideoPlayer extends AppCompatActivity
         }
     }
 
-    private void checkCardsAppearanceTime(int currentProgress) {
+    private void checkCardsAppearanceTime(final int currentProgress) {
         int i = 0;
         for (long time : cardsAppearanceTime) {
             if (isBetween((int) time, 100, currentProgress)) {
                 TextView teaserTV = findViewById(R.id.cardTeaserMessage);
                 teaserTV.setVisibility(View.VISIBLE);
                 teaserTV.setText(cards.get(i).getTeaserMessage());
-                Toast.makeText(getApplicationContext(), cards.get(i).getTeaserMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), cards.get(i).getTeaserMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
             i++;
         }
     }
 
-    private boolean isBetween(int timeWanted, int delay, int actualTime) {
+    private boolean isBetween(final int timeWanted, final int delay, final int actualTime) {
         return actualTime - delay <= timeWanted && timeWanted <= actualTime + delay;
     }
 
@@ -1359,18 +1349,18 @@ public final class MainVideoPlayer extends AppCompatActivity
             switch (current.getType()) {
                 case (Card.CHANNEL):
                     NavigationHelper.openChannel(getApplicationContext(), current.getServiceId(),
-                            current.getUrl(), Intent.FLAG_ACTIVITY_NEW_TASK);
+                            current.getUrl()/*, Intent.FLAG_ACTIVITY_NEW_TASK*/);
                     break;
                 case (Card.VIDEO):
-                    NavigationHelper.openVideoDetail(getApplicationContext(), current.getServiceId(),
-                            current.getUrl(), Intent.FLAG_ACTIVITY_NEW_TASK);
+                    NavigationHelper.openVideoDetail(getApplicationContext(),
+                            current.getServiceId(),
+                            current.getUrl()/*, Intent.FLAG_ACTIVITY_NEW_TASK*/);
                     break;
                 case (Card.PLAYLIST):
-                    NavigationHelper.openPlaylist(getApplicationContext(), current.getServiceId(),
-                            current.getUrl(), Intent.FLAG_ACTIVITY_NEW_TASK);
+                    NavigationHelper.openPlaylistFragment(getSupportFragmentManager(),
+                            current.getServiceId(), current.getUrl(), current.getTitle());
                 case (Card.LINK):
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(current.getUrl()));
-                    startActivity(browserIntent);
+                    ShareUtils.openUrlInBrowser(getApplicationContext(), current.getUrl());
                 default:
                     break; //do nothing
             }
@@ -1448,7 +1438,7 @@ public final class MainVideoPlayer extends AppCompatActivity
 
             final boolean isTouchingStatusBar = initialEvent.getY() < getStatusBarHeight();
             final boolean isTouchingNavigationBar = initialEvent.getY()
-                            > playerImpl.getRootView().getHeight() - getNavigationBarHeight();
+                    > playerImpl.getRootView().getHeight() - getNavigationBarHeight();
             if (isTouchingStatusBar || isTouchingNavigationBar) {
                 return false;
             }
@@ -1523,8 +1513,8 @@ public final class MainVideoPlayer extends AppCompatActivity
                 final int resId = currentProgressPercent < 0.25
                         ? R.drawable.ic_brightness_low_white_72dp
                         : currentProgressPercent < 0.75
-                                ? R.drawable.ic_brightness_medium_white_72dp
-                                : R.drawable.ic_brightness_high_white_72dp;
+                        ? R.drawable.ic_brightness_medium_white_72dp
+                        : R.drawable.ic_brightness_high_white_72dp;
 
                 playerImpl.getBrightnessImageView().setImageDrawable(
                         AppCompatResources.getDrawable(getApplicationContext(), resId)

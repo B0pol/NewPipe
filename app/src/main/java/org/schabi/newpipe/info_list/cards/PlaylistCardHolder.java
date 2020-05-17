@@ -16,7 +16,8 @@ public class PlaylistCardHolder extends RecyclerView.ViewHolder {
     public TextView title;
     public ImageView thumbnail;
 
-    public PlaylistCardHolder(@NonNull View itemView, final CardAdapter.OnItemClickListener listener) {
+    public PlaylistCardHolder(
+            @NonNull final View itemView, final CardAdapter.OnItemClickListener listener) {
         super(itemView);
         thumbnail = itemView.findViewById(R.id.itemThumbnailView);
         videoCount = itemView.findViewById(R.id.itemStreamCountView);

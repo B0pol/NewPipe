@@ -17,7 +17,8 @@ public class VideoCardHolder extends RecyclerView.ViewHolder {
     public TextView uploader;
     public TextView time;
 
-    public VideoCardHolder(@NonNull View itemView, final CardAdapter.OnItemClickListener listener) {
+    public VideoCardHolder(
+            @NonNull final View itemView, final CardAdapter.OnItemClickListener listener) {
         super(itemView);
         thumbnail = itemView.findViewById(R.id.itemThumbnailView);
         title = itemView.findViewById(R.id.itemVideoTitleView);

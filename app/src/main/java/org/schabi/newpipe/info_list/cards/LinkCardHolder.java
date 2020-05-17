@@ -16,7 +16,8 @@ public class LinkCardHolder extends RecyclerView.ViewHolder {
     public TextView message;
     public ImageView thumbnail;
 
-    public LinkCardHolder(@NonNull View itemView, final CardAdapter.OnItemClickListener listener) {
+    public LinkCardHolder(
+            @NonNull final View itemView, final CardAdapter.OnItemClickListener listener) {
         super(itemView);
         host = itemView.findViewById(R.id.itemHostView);
         title = itemView.findViewById(R.id.itemTitleView);

@@ -16,7 +16,8 @@ public class ChannelCardHolder extends RecyclerView.ViewHolder {
     public TextView name;
     public TextView subscriberCount;
 
-    public ChannelCardHolder(@NonNull View itemView, final CardAdapter.OnItemClickListener listener) {
+    public ChannelCardHolder(
+            @NonNull final View itemView, final CardAdapter.OnItemClickListener listener) {
         super(itemView);
         thumbnail = itemView.findViewById(R.id.itemThumbnailView);
         name = itemView.findViewById(R.id.itemTitleView);

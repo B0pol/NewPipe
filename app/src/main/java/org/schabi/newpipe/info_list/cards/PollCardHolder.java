@@ -24,7 +24,7 @@ public class PollCardHolder extends RecyclerView.ViewHolder {
     public TextView votes4;
     public TextView votes5;
 
-    public PollCardHolder(@NonNull View itemView) {
+    public PollCardHolder(@NonNull final View itemView) {
         super(itemView);
         title = itemView.findViewById(R.id.cardPollTitle);
         totalVotes = itemView.findViewById(R.id.cardPollTotalVotes);
@@ -42,7 +42,7 @@ public class PollCardHolder extends RecyclerView.ViewHolder {
         //no onclick listener
     }
 
-    public TextView getPollAnswer(int i) {
+    public TextView getPollAnswer(final int i) {
         switch (i) {
             case 0:
                 return answer1;
@@ -59,7 +59,7 @@ public class PollCardHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public TextView getPollVotesTextView(int i) {
+    public TextView getPollVotesTextView(final int i) {
         switch (i) {
             case 0:
                 return votes1;
