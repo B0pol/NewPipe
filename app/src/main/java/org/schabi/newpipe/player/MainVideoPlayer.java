@@ -71,6 +71,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SubtitleView;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.RouterActivity;
 import org.schabi.newpipe.extractor.stream.Card;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
@@ -1348,19 +1349,20 @@ public final class MainVideoPlayer extends AppCompatActivity
             Card current = cards.get(position);
             switch (current.getType()) {
                 case (Card.CHANNEL):
-                    NavigationHelper.openChannel(getApplicationContext(), current.getServiceId(),
-                            current.getUrl()/*, Intent.FLAG_ACTIVITY_NEW_TASK*/);
+                    NavigationHelper.openChannel(recyclerView.getContext(), current.getServiceId(),
+                            current.getUrl(), current.getTitle());
                     break;
                 case (Card.VIDEO):
-                    NavigationHelper.openVideoDetail(getApplicationContext(),
-                            current.getServiceId(),
-                            current.getUrl()/*, Intent.FLAG_ACTIVITY_NEW_TASK*/);
+                    NavigationHelper.openVideoDetail(recyclerView.getContext(),
+                            current.getServiceId(), current.getUrl(), current.getTitle());
                     break;
                 case (Card.PLAYLIST):
-                    NavigationHelper.openPlaylistFragment(getSupportFragmentManager(),
-                            current.getServiceId(), current.getUrl(), current.getTitle());
+                    Intent i = new Intent(this, RouterActivity.class);
+                    i.setData(Uri.parse(current.getUrl()));
+                    startActivity(i);
+                    break;
                 case (Card.LINK):
-                    ShareUtils.openUrlInBrowser(getApplicationContext(), current.getUrl());
+                    ShareUtils.openUrlInBrowser(recyclerView.getContext(), current.getUrl());
                 default:
                     break; //do nothing
             }
